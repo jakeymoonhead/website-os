@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cinematography OS</title>
+  <style>
+    body { background-color: #008080; font-family: "Courier New", Courier, monospace; margin: 0; padding: 20px; overflow: hidden; user-select: none; touch-action: none; }
+    .wallpaper { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; color: #fff; font-size: 40px; opacity: 0.2; display: grid; grid-template-columns: repeat(16, 1fr); gap: 40px; padding: 40px; pointer-events: none; }
+    .home-btn { position: fixed; top: 20px; right: 20px; background: #c0c0c0; border: 2px outset #ffffff; padding: 5px 10px; cursor: pointer; font-weight: bold; z-index: 9999; }
+    
+    .window { background: #c0c0c0; border: 2px solid; border-color: #ffffff #000000 #000000 #ffffff; position: absolute; display: none; box-shadow: 4px 4px 0px rgba(0,0,0,0.5); touch-action: none; }
+    .title-bar { background: #000080; color: white; padding: 8px 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: move; }
+    .close-btn { background: #c0c0c0; color: black; border: 2px solid; border-color: #ffffff #000000 #000000 #ffffff; padding: 2px 8px; cursor: pointer; font-size: 16px; }
+    
+    .content { padding: 10px; }
+    .inner-box { background: #fff; border: 2px inset #808080; padding: 5px; }
+    
+    .icon-container { display: flex; flex-direction: column; gap: 30px; width: 100px; }
+    .desktop-icon { cursor: pointer; color: white; text-align: center; }
+    
+    /* Mobile Override */
+    @media (max-width: 600px) {
+      .window { width: 90vw !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="home-btn" onclick="location.reload()">RESTART OS</div>
+
+  <div class="wallpaper">
+    <div>█</div><div>▓</div><div>▒</div><div>░</div><div>█</div><div>▓</div><div>▒</div><div>░</div>
+    <div>░</div><div>▒</div><div>▓</div><div>█</div><div>░</div><div>▒</div><div>▓</div><div>█</div>
+    <div>█</div><div>▓</div><div>▒</div><div>░</div><div>█</div><div>▓</div><div>▒</div><div>░</div>
+  </div>
+
+  <div class="icon-container">
+    <div class="desktop-icon" id="reel-icon"><div>📼</div><span>Reel</span></div>
+    <div class="desktop-icon" id="contact-icon"><div>📇</div><span>Contact</span></div>
+    <div class="desktop-icon"><div>📁</div><span>Assets</span></div>
+    <div class="desktop-icon"><div>⚙️</div><span>Config</span></div>
+  </div>
+
+  <div id="virus-icon" class="desktop-icon" style="position:absolute; top:280px; left:160px;">
+    <div>💀</div><span style="font-weight:bold; background:yellow; color:black; padding:2px;">SEE WORK NOW!!</span>
+  </div>
+
+  <div class="window" id="main-reel" style="display:block; top:10%; left:5%; width:300px;">
+    <div class="title-bar"><span>📼 main_reel.exe</span><div class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">X</div></div>
+    <div class="content"><div class="inner-box"><iframe width="100%" height="200" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allow="autoplay"></iframe></div></div>
+  </div>
+
+  <script>
+    let z = 10;
+    const myProjects = [
+      { title: "Marvin Family Tortoise", src: "https://player.vimeo.com/video/265472954?h=c78892e12e&autoplay=1&muted=1&byline=0&portrait=0&badge=0" },
+      { title: "Friendship", src: "https://player.vimeo.com/video/453065328?h=2a1b131838&autoplay=1&muted=1&byline=0&portrait=0&badge=0" },
+      { title: "Chekhov's Gun", src: "https://player.vimeo.com/video/354445870?h=a12323dc49&autoplay=1&muted=1&byline=0&portrait=0&badge=0" },
+      { title: "The Last Crow", src: "https://player.vimeo.com/video/215289807?h=6870ac8946&autoplay=1&muted=1&byline=0&portrait=0&badge=0" }
+    ];
+
+    function bringToFront(el) { z++; el.style.zIndex = z; }
+    
+    function makeDraggable(el) {
+      const handle = el.querySelector('.title-bar');
+      let offset = { x: 0, y: 0 };
+      
+      handle.onpointerdown = (e) => {
+        bringToFront(el);
+        offset.x = e.clientX - el.offsetLeft;
+        offset.y = e.clientY - el.offsetTop;
+        handle.setPointerCapture(e.pointerId);
+      };
+      
+      handle.onpointermove = (e) => {
+        if (handle.hasPointerCapture(e.pointerId)) {
+          el.style.left = (e.clientX - offset.x) + 'px';
+          el.style.top = (e.clientY - offset.y) + 'px';
+        }
+      };
+    }
+
+    document.getElementById('reel-icon').onclick = () => { document.getElementById('main-reel').style.display='block'; makeDraggable(document.getElementById('main-reel')); };
+    
+    document.getElementById('virus-icon').onclick = function() {
+      let queue = [...myProjects]; 
+      for(let i=0; i<11; i++) queue.push(null); 
+      queue.sort(() => Math.random() - 0.5); 
+      
+      queue.forEach((item, i) => {
+        setTimeout(() => {
+          const win = document.createElement('div');
+          win.className = 'window';
+          win.style.top = (5 + Math.random() * 50) + '%';
+          win.style.left = (5 + Math.random() * 30) + '%';
+          win.style.width = '300px'; 
+          win.style.display = 'block';
+          
+          let inner = item ? `<iframe width="100%" height="200" src="${item.src}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>` : (Math.random() > 0.5 ? `<img src="https://picsum.photos/400/200?random=${Math.random()}" width="100%">` : `<div style="padding:20px; color:red; font-weight:bold;">ERROR ${Math.floor(Math.random()*9999)}</div>`);
+          
+          win.innerHTML = `<div class="title-bar"><span>💾 ${item ? item.title : "ERROR"}</span><div class="close-btn" onclick="this.parentElement.parentElement.remove()">X</div></div><div class="content">${inner}</div>`;
+          document.body.appendChild(win);
+          makeDraggable(win);
+          bringToFront(win);
+        }, i * 500);
+      });
+    };
+  </script>
+</body>
+</html>
